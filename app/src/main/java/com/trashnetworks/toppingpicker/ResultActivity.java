@@ -13,10 +13,19 @@ public class ResultActivity extends Activity {
 
         Bundle b = getIntent().getExtras();
         String[] resultArr = b.getStringArray("selectedItems");
+        resultArr = randomize(resultArr);
         ListView lv = (ListView) findViewById(R.id.outputList);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, resultArr);
         lv.setAdapter(adapter);
+    }
+
+    private String[] randomize(String[] arr) {
+        String[] randomSelection = new String[arr.length];
+        for (int i = 0; i < randomSelection.length; i++) {
+            randomSelection[i] = arr[(int)(Math.random()*arr.length)];
+        }
+        return randomSelection;
     }
 }

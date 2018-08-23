@@ -19,6 +19,9 @@
             android:name=".ResultActivity"
             android:label="@string/result_activity">
         </activity>
+        <activity android:name=".SpinnerActivity">
+
+        </activity>
     </application>
 
 </manifest>
