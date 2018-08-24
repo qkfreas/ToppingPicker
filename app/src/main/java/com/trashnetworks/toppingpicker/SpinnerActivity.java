@@ -5,26 +5,24 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 public class SpinnerActivity extends Activity implements AdapterView.OnItemSelectedListener {
-//    Spinner spinner = (Spinner) findViewById(R.id.amount_spinner);
     private String itemSelected;
-
-//    public SpinnerActivity() {
-//
-//// Create an ArrayAdapter using the string array and a default spinner layout
-//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-//                R.array.amount_array, android.R.layout.simple_spinner_item);
-//// Specify the layout to use when the list of choices appears
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//// Apply the adapter to the spinner
-//        spinner.setAdapter(adapter);
-//    }
 
     public void onItemSelected(AdapterView<?> parent, View view,
                                int pos, long id) {
-        // An item was selected. You can retrieve the selected item using
-         itemSelected = parent.getItemAtPosition(pos).toString();
+        try {
+
+            String var = parent.getItemAtPosition(pos).toString();
+            System.out.println("This is var: " + var);
+            setItemSelected(var);
+            Toast.makeText(parent.getContext(),
+                    "OnItemSelectedListener : " + var,
+                    Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            System.out.println("ERROR AT: SpinnerActivity.onItemsSelected");
+        }
     }
 
     public void onNothingSelected(AdapterView<?> parent) {
@@ -33,5 +31,9 @@ public class SpinnerActivity extends Activity implements AdapterView.OnItemSelec
 
     public String getItemSelected() {
         return itemSelected;
+    }
+
+    public void setItemSelected(String itemSelected) {
+        this.itemSelected = itemSelected;
     }
 }

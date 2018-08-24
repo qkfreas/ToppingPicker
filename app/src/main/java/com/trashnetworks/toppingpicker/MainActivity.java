@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements
     Button button;
     ListView listView;
     ArrayAdapter<String> adapter;
-    private String itemSelected;
+    private SpinnerActivity spinnerActivity;
 
     /**
      * Called when the activity is first created.
@@ -51,28 +51,42 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        findViewsById();
+        itemList();
+        amountSpinner();
+    }
 
-        String[] sports = getResources().getStringArray(R.array.sports_array);
-        adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_multiple_choice, sports);
-        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-        listView.setAdapter(adapter);
+    private void itemList() {
+        try {
 
-        button.setOnClickListener(this);
+            findViewsById();
 
+            String[] sports = getResources().getStringArray(R.array.sports_array);
+            adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_list_item_multiple_choice, sports);
+            listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+            listView.setAdapter(adapter);
 
+            button.setOnClickListener(this);
+        } catch (Exception e) {
+            System.out.println("ERROR AT: MainActivity.itemList");
+        }
     }
 
     private void amountSpinner() {
-        Spinner spinner = (Spinner) findViewById(R.id.amount_spinner);
-// Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.amount_array, android.R.layout.simple_spinner_item);
-// Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-// Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
+        try {
+            spinnerActivity = new SpinnerActivity();
+            Spinner spinner = (Spinner) findViewById(R.id.amount_spinner);
+            // Create an ArrayAdapter using the string array and a default spinner layout
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                    R.array.amount_array, android.R.layout.simple_spinner_item);
+            // Specify the layout to use when the list of choices appears
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            // Apply the adapter to the spinner
+            spinner.setAdapter(adapter);
+            spinner.setOnItemSelectedListener(spinnerActivity);
+        } catch (Exception e) {
+            System.out.println("ERROR AT: MainActivity.amountSpinner");
+        }
     }
 
     private void findViewsById() {
@@ -81,44 +95,42 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void onClick(View v) {
-        SparseBooleanArray checked = listView.getCheckedItemPositions();
-        ArrayList<String> selectedItems = new ArrayList<String>();
-        for (int i = 0; i < checked.size(); i++) {
-            // Item position in adapter
-            int position = checked.keyAt(i);
-            // Add sport if it is checked i.e.) == TRUE!
-            if (checked.valueAt(i))
-                selectedItems.add(adapter.getItem(position));
+        try {
+
+            SparseBooleanArray checked = listView.getCheckedItemPositions();
+            ArrayList<String> selectedItems = new ArrayList<String>();
+            for (int i = 0; i < checked.size(); i++) {
+                // Item position in adapter
+                int position = checked.keyAt(i);
+                // Add sport if it is checked i.e.) == TRUE!
+                if (checked.valueAt(i)) {
+                    selectedItems.add(adapter.getItem(position));
+                }
+            }
+
+            String[] outputStrArr = new String[selectedItems.size() + 1];
+
+            for (int i = 0; i < selectedItems.size() - 1; i++) {
+                outputStrArr[i] = selectedItems.get(i);
+            }
+            outputStrArr[selectedItems.size()] = spinnerActivity.getItemSelected();
+            System.out.println("Items Selected " + spinnerActivity.getItemSelected());
+
+            Intent intent = new Intent(getApplicationContext(),
+                    ResultActivity.class);
+
+            // Create a bundle object
+            Bundle b = new Bundle();
+            b.putStringArray("selectedItems", outputStrArr);
+
+            // Add the bundle to the intent.
+            intent.putExtras(b);
+
+            // start the ResultActivity
+            startActivity(intent);
+        } catch (Exception e) {
+            System.out.println("ERROR AT: MainActivity.onClick");
         }
-
-        String[] outputStrArr = new String[selectedItems.size()];
-
-        for (int i = 0; i < selectedItems.size(); i++) {
-            outputStrArr[i] = selectedItems.get(i);
-        }
-
-        Intent intent = new Intent(getApplicationContext(),
-                ResultActivity.class);
-
-        // Create a bundle object
-        Bundle b = new Bundle();
-        b.putStringArray("selectedItems", outputStrArr);
-
-        // Add the bundle to the intent.
-        intent.putExtras(b);
-
-        // start the ResultActivity
-        startActivity(intent);
-    }
-
-    public void onItemSelected(AdapterView<?> parent, View view,
-                               int pos, long id) {
-        // An item was selected. You can retrieve the selected item using
-        itemSelected = parent.getItemAtPosition(pos).toString();
-    }
-
-    public void onNothingSelected(AdapterView<?> parent) {
-        // Another interface callback
     }
 }
 
